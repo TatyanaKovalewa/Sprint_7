@@ -6,6 +6,7 @@ import org.junit.Before;
 import org.junit.Test;
 import java.util.List;
 
+import static org.apache.http.HttpStatus.*;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.notNullValue;
@@ -35,7 +36,7 @@ public class OrderGetTest {
         );
 
         return orderSteps.createOrder(order)
-                .statusCode(201)
+                .statusCode(SC_CREATED)
                 .extract()
                 .path("track");
     }
@@ -47,7 +48,7 @@ public class OrderGetTest {
         int track = createOrderAndGetTrack();
 
         orderSteps.getOrderByTrack(track)
-                .statusCode(200)
+                .statusCode(SC_OK)
                 .body("order", notNullValue())
                 .body("order.track", equalTo(track))
                 .body("order.firstName", equalTo("Иван"))
@@ -66,7 +67,7 @@ public class OrderGetTest {
     @Description("Проверка: запрос без номера заказа возвращает ошибку")
     public void cannotGetOrderWithoutTrack() {
         orderSteps.getOrderWithoutTrack()
-                .statusCode(400)
+                .statusCode(SC_BAD_REQUEST)
                 .body("message", equalTo("Недостаточно данных для поиска"));
     }
 
@@ -74,10 +75,10 @@ public class OrderGetTest {
     @DisplayName("Нельзя получить заказ с несуществующим номером")
     @Description("Проверка: запрос с несуществующим заказом возвращает ошибку")
     public void cannotGetOrderWithInvalidTrack() {
-        int invalidTrack = 999999999;
+        int invalidTrack = Integer.MAX_VALUE;
 
         orderSteps.getOrderByTrack(invalidTrack)
-                .statusCode(404)
+                .statusCode(SC_NOT_FOUND)
                 .body("message", equalTo("Заказ не найден"));
     }
 

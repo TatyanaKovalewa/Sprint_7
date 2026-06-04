@@ -8,6 +8,7 @@ import org.junit.Test;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.apache.http.HttpStatus.*;
 import static org.hamcrest.Matchers.equalTo;
 
 public class OrderAcceptTest {
@@ -43,9 +44,9 @@ public class OrderAcceptTest {
         String uniqueLogin = "courier_" + System.currentTimeMillis();
         Courier courier = new Courier(uniqueLogin, "1234", "Тестовый");
 
-        courierSteps.createCourier(courier).statusCode(201);
+        courierSteps.createCourier(courier).statusCode(SC_CREATED);
         int courierId = courierSteps.loginCourier(courier)
-                .statusCode(200)
+                .statusCode(SC_OK)
                 .extract()
                 .path("id");
         createdCourierIds.add(courierId);
@@ -66,7 +67,7 @@ public class OrderAcceptTest {
         );
 
         int track = orderSteps.createOrder(order)
-                .statusCode(201)
+                .statusCode(SC_CREATED)
                 .extract()
                 .path("track");
 
@@ -85,7 +86,7 @@ public class OrderAcceptTest {
         int orderId = createOrderAndGetId();
 
         orderAcceptSteps.acceptOrder(orderId, courierId)
-                .statusCode(200)
+                .statusCode(SC_OK)
                 .body("ok", equalTo(true));
     }
 
@@ -96,7 +97,7 @@ public class OrderAcceptTest {
         int orderId = createOrderAndGetId();
 
         orderAcceptSteps.acceptOrderWithoutCourierId(orderId)
-                .statusCode(400)
+                .statusCode(SC_BAD_REQUEST)
                 .body("message", equalTo("Недостаточно данных для поиска"));
     }
 
@@ -105,10 +106,10 @@ public class OrderAcceptTest {
     @Description("Проверка: если передать неверный id курьера, запрос вернёт ошибку")
     public void cannotAcceptOrderWithInvalidCourierId() {
         int orderId = createOrderAndGetId();
-        int invalidCourierId = 999999999;
+        int invalidCourierId = Integer.MAX_VALUE;
 
         orderAcceptSteps.acceptOrder(orderId, invalidCourierId)
-                .statusCode(404)
+                .statusCode(SC_NOT_FOUND)
                 .body("message", equalTo("Курьера с таким id не существует"));
     }
 
@@ -119,7 +120,7 @@ public class OrderAcceptTest {
         int courierId = createCourier();
 
         orderAcceptSteps.acceptOrderWithoutOrderId(courierId)
-                .statusCode(400)
+                .statusCode(SC_BAD_REQUEST)
                 .body("message", equalTo("Недостаточно данных для поиска"));
     }
 
@@ -128,10 +129,10 @@ public class OrderAcceptTest {
     @Description("Проверка: если передать неверный номер заказа, запрос вернёт ошибку")
     public void cannotAcceptOrderWithInvalidOrderId() {
         int courierId = createCourier();
-        int invalidOrderId = 999999999;
+        int invalidOrderId = Integer.MAX_VALUE;
 
         orderAcceptSteps.acceptOrder(invalidOrderId, courierId)
-                .statusCode(404)
+                .statusCode(SC_NOT_FOUND)
                 .body("message", equalTo("Заказа с таким id не существует"));
     }
 }

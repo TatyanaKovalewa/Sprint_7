@@ -6,6 +6,7 @@ public class OrderSteps {
 
     private static final String ORDER_PATH = "/api/v1/orders";
     private static final String GET_ORDER_PATH = "/api/v1/orders/track";
+    private static final String CANCEL_ORDER_PATH = "/api/v1/orders/cancel";
 
     @Step("Создание заказа с параметрами: firstName={order.firstName}, color={order.color}")
     public ValidatableResponse createOrder(Order order) {
@@ -42,6 +43,16 @@ public class OrderSteps {
                 .header("Content-type", "application/json")
                 .when()
                 .get(GET_ORDER_PATH)
+                .then();
+    }
+
+    @Step("Отмена заказа по track: {track}")
+    public ValidatableResponse cancelOrder(int track) {
+        return given()
+                .header("Content-type", "application/json")
+                .body("{\"track\": " + track + "}")
+                .when()
+                .put(CANCEL_ORDER_PATH)
                 .then();
     }
 

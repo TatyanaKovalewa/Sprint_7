@@ -4,6 +4,7 @@ import io.restassured.RestAssured;
 import org.junit.Before;
 import org.junit.Test;
 
+import static org.apache.http.HttpStatus.*;
 import static org.hamcrest.Matchers.*;
 
 public class OrdersListTest {
@@ -21,7 +22,7 @@ public class OrdersListTest {
     @Description("Проверка, что тело ответа содержит список заказов")
     public void getOrdersListReturnsOrders() {
         orderSteps.getOrdersList()
-                .statusCode(200)
+                .statusCode(SC_OK)
                 .body("orders", notNullValue());
     }
 

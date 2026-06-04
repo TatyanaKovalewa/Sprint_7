@@ -8,8 +8,8 @@ import org.junit.Test;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.apache.http.HttpStatus.*;
 import static org.hamcrest.Matchers.equalTo;
-import static io.restassured.RestAssured.given;
 
 public class CourierCreateTest {
 
@@ -35,10 +35,10 @@ public class CourierCreateTest {
                 String password = createdPasswords.get(i);
                 Courier tempCourier = new Courier(login, password, null);
                 int courierId = courierSteps.loginCourier(tempCourier)
-                        .statusCode(200)
+                        .statusCode(SC_OK)
                         .extract()
                         .path("id");
-                courierSteps.deleteCourier(courierId).statusCode(200);
+                courierSteps.deleteCourier(courierId).statusCode(SC_OK);
                 System.out.println("Курьер с логином " + login + " успешно удален");
             } catch (Exception e) {
                 System.out.println("Не удалось удалить курьера с логином: " + createdLogins.get(i));
@@ -48,8 +48,8 @@ public class CourierCreateTest {
 
     @Test
     @DisplayName("Успешное создание курьера")
-    @Description("Проверка создания курьера со всеми обязательными полями")
-    public void createCourier() {
+    @Description("Проверка создания курьера со всеми обязательными полями - возвращает код 201 и ok: true")
+    public void createCourierSuccess() {
         String uniqueLogin = "ivan_" + System.currentTimeMillis();
         String password = "1234";
         Courier courier = new Courier(uniqueLogin, password, "Иван");
@@ -57,7 +57,7 @@ public class CourierCreateTest {
         createdPasswords.add(password);
 
         courierSteps.createCourier(courier)
-                .statusCode(201)
+                .statusCode(SC_CREATED)
                 .body("ok", equalTo(true));
     }
 
@@ -72,11 +72,11 @@ public class CourierCreateTest {
         createdPasswords.add(password);
 
         // Создаем первого курьера
-        courierSteps.createCourier(courier).statusCode(201);
+        courierSteps.createCourier(courier).statusCode(SC_CREATED);
 
         // Пытаемся создать второго с теми же данными
         courierSteps.createCourier(courier)
-                .statusCode(409)
+                .statusCode(SC_CONFLICT)
                 .body("message", equalTo("Этот логин уже используется. Попробуйте другой."));
     }
 
@@ -87,7 +87,7 @@ public class CourierCreateTest {
         Courier courier = new Courier(null, "1234", "Иван");
 
         courierSteps.createCourier(courier)
-                .statusCode(400)
+                .statusCode(SC_BAD_REQUEST)
                 .body("message", equalTo("Недостаточно данных для создания учетной записи"));
     }
 
@@ -99,7 +99,7 @@ public class CourierCreateTest {
         Courier courier = new Courier(uniqueLogin, null, "Иван");
 
         courierSteps.createCourier(courier)
-                .statusCode(400)
+                .statusCode(SC_BAD_REQUEST)
                 .body("message", equalTo("Недостаточно данных для создания учетной записи"));
     }
 
@@ -114,35 +114,7 @@ public class CourierCreateTest {
         createdPasswords.add(password);
 
         courierSteps.createCourier(courier)
-                .statusCode(201)
-                .body("ok", equalTo(true));
-    }
-
-    @Test
-    @DisplayName("Проверка статус кода при успешном создании")
-    @Description("Успешный запрос должен возвращать статус код 201")
-    public void createCourierReturnsCorrectStatusCode() {
-        String uniqueLogin = "statuscode_" + System.currentTimeMillis();
-        String password = "1234";
-        Courier courier = new Courier(uniqueLogin, password, "Иван");
-        createdLogins.add(uniqueLogin);
-        createdPasswords.add(password);
-
-        courierSteps.createCourier(courier).statusCode(201);
-    }
-
-    @Test
-    @DisplayName("Проверка поля ok в успешном ответе")
-    @Description("Успешный ответ должен содержать ok: true")
-    public void successResponseReturnsOkTrue() {
-        String uniqueLogin = "oktest_" + System.currentTimeMillis();
-        String password = "1234";
-        Courier courier = new Courier(uniqueLogin, password, "Иван");
-        createdLogins.add(uniqueLogin);
-        createdPasswords.add(password);
-
-        courierSteps.createCourier(courier)
-                .statusCode(201)
+                .statusCode(SC_CREATED)
                 .body("ok", equalTo(true));
     }
 
@@ -153,7 +125,7 @@ public class CourierCreateTest {
         Courier courier = new Courier("", "1234", "Иван");
 
         courierSteps.createCourier(courier)
-                .statusCode(400)
+                .statusCode(SC_BAD_REQUEST)
                 .body("message", equalTo("Недостаточно данных для создания учетной записи"));
     }
 
@@ -165,7 +137,7 @@ public class CourierCreateTest {
         Courier courier = new Courier(uniqueLogin, "", "Иван");
 
         courierSteps.createCourier(courier)
-                .statusCode(400)
+                .statusCode(SC_BAD_REQUEST)
                 .body("message", equalTo("Недостаточно данных для создания учетной записи"));
     }
 
@@ -173,13 +145,8 @@ public class CourierCreateTest {
     @DisplayName("Нельзя создать курьера с пустым телом запроса")
     @Description("Пустой JSON объект не содержит обязательных полей")
     public void cannotCreateCourierWithEmptyBody() {
-        given()
-                .header("Content-type", "application/json")
-                .body("{}")
-                .when()
-                .post("/api/v1/courier")
-                .then()
-                .statusCode(400)
+        courierSteps.createCourierWithEmptyBody()
+                .statusCode(SC_BAD_REQUEST)
                 .body("message", equalTo("Недостаточно данных для создания учетной записи"));
     }
 
@@ -194,7 +161,7 @@ public class CourierCreateTest {
         createdPasswords.add(password);
 
         courierSteps.createCourier(courier)
-                .statusCode(201)
+                .statusCode(SC_CREATED)
                 .body("ok", equalTo(true));
     }
 
