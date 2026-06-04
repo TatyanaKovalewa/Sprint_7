@@ -119,7 +119,7 @@ public class CourierLoginTest {
     @DisplayName("Возвращается ошибка, если поле логин отсутствует")
     @Description("Проверка, что запрос без поля login возвращает ошибку 400")
     public void loginWithoutLoginFieldReturnsError() {
-        courierSteps.loginWithoutLoginField()
+        courierSteps.loginWithoutLoginField("1234")
                 .statusCode(SC_BAD_REQUEST)
                 .body("message", equalTo("Недостаточно данных для входа"));
     }
@@ -128,7 +128,7 @@ public class CourierLoginTest {
     @DisplayName("Возвращается ошибка, если поле пароль отсутствует")
     @Description("Проверка, что запрос без поля password возвращает ошибку 400")
     public void loginWithoutPasswordFieldReturnsError() {
-        courierSteps.loginWithoutPasswordField()
+        courierSteps.loginWithoutPasswordField("some_login")
                 .statusCode(SC_BAD_REQUEST)
                 .body("message", equalTo("Недостаточно данных для входа"));
     }

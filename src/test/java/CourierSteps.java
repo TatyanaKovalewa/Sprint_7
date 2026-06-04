@@ -39,21 +39,25 @@ public class CourierSteps {
                 .then();
     }
 
-    @Step("Попытка логина без поля login")
-    public ValidatableResponse loginWithoutLoginField() {
+    @Step("Попытка логина без поля login (только password)")
+    public ValidatableResponse loginWithoutLoginField(String password) {
+        CourierLoginRequest request = new CourierLoginRequest(null, password);
+
         return given()
                 .header("Content-type", "application/json")
-                .body("{\"password\": \"1234\"}")
+                .body(request)
                 .when()
                 .post(LOGIN_PATH)
                 .then();
     }
 
-    @Step("Попытка логина без поля password")
-    public ValidatableResponse loginWithoutPasswordField() {
+    @Step("Попытка логина без поля password (только login)")
+    public ValidatableResponse loginWithoutPasswordField(String login) {
+        CourierLoginRequest request = new CourierLoginRequest(login, null);
+
         return given()
                 .header("Content-type", "application/json")
-                .body("{\"login\": \"some_login\"}")
+                .body(request)
                 .when()
                 .post(LOGIN_PATH)
                 .then();
@@ -61,9 +65,11 @@ public class CourierSteps {
 
     @Step("Попытка логина с пустым телом запроса")
     public ValidatableResponse loginWithEmptyBody() {
+        CourierLoginRequest request = new CourierLoginRequest();
+
         return given()
                 .header("Content-type", "application/json")
-                .body("{}")
+                .body(request)
                 .when()
                 .post(LOGIN_PATH)
                 .then();

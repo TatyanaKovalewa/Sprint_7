@@ -48,9 +48,11 @@ public class OrderSteps {
 
     @Step("Отмена заказа по track: {track}")
     public ValidatableResponse cancelOrder(int track) {
+        CancelOrderRequest request = new CancelOrderRequest(track);
+
         return given()
                 .header("Content-type", "application/json")
-                .body("{\"track\": " + track + "}")
+                .body(request)
                 .when()
                 .put(CANCEL_ORDER_PATH)
                 .then();
