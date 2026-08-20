@@ -1,0 +1,213 @@
+{
+  "info": {
+    "_postman_id": "72729a72-fde4-46c0-88ab-185e0da66c73",
+    "name": "Yandex.Samokat",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "50998741",
+    "_collection_link": "https://go.postman.co/collection/50998741-72729a72-fde4-46c0-88ab-185e0da66c73?source=collection_link"
+  },
+  "item": [
+    {
+      "name": "Создать курьера",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"login\": \"vladimir\", \r\n    \"password\": \"5417\", \r\n    \"firstName\": \"Vladimir\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{server_url}}/api/v1/courier",
+          "host": [
+            "{{server_url}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "courier"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Авторизация курьера",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"login\": \"vladimir\", \r\n    \"password\": \"5417\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{server_url}}/api/v1/courier/login\n",
+          "host": [
+            "{{server_url}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "courier",
+            "login\n"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Создать заказ",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"firstName\": \"Катя\",\r\n    \"lastName\": \"Иванова\",\r\n    \"address\": \"Комсомольская, 7\",\r\n    \"metroStation\": 4,\r\n    \"phone\": \"+79007002222\",\r\n    \"rentTime\": 5,\r\n    \"deliveryDate\": \"2026-06-14\",\r\n    \"comment\": \"код 01\",\r\n    \"color\": [\r\n        \"BLACK\"\r\n    ]\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{server_url}}/api/v1/orders",
+          "host": [
+            "{{server_url}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "orders"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Принять заказ",
+      "request": {
+        "method": "PUT",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{server_url}}/api/v1/orders/accept/7?courierId=1",
+          "host": [
+            "{{server_url}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "orders",
+            "accept",
+            "7"
+          ],
+          "query": [
+            {
+              "key": "courierId",
+              "value": "1"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Получить список заказов",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{server_url}}/api/v1/orders",
+          "host": [
+            "{{server_url}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "orders"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Завершить заказ",
+      "request": {
+        "method": "PUT",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{server_url}}/api/v1/orders/finish/13",
+          "host": [
+            "{{server_url}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "orders",
+            "finish",
+            "13"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Удалить курьера",
+      "request": {
+        "auth": {
+          "type": "noauth"
+        },
+        "method": "DELETE",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{server_url}}/api/v1/courier/792128",
+          "host": [
+            "{{server_url}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "courier",
+            "792128"
+          ]
+        }
+      },
+      "response": []
+    }
+  ]
+}
