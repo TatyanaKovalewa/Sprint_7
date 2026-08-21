@@ -21,6 +21,11 @@ def load_baseline():
         }
 
 
+def base_name(name):
+    """Отбрасывает суффикс с параметрами: Test#method[Кнопка: true, ...] -> Test#method."""
+    return name.split("[", 1)[0]
+
+
 def collect_failures():
     failed, flaky = set(), set()
     for path in sorted(glob.glob("target/surefire-reports/TEST-*.xml")):
@@ -42,9 +47,15 @@ def main():
     known = load_baseline()
     failed, flaky = collect_failures()
 
-    unexpected = sorted(failed - known)
-    expected = sorted(failed & known)
-    fixed = sorted(known - failed)
+    # Строка списка может задавать как конкретный прогон параметризованного теста,
+    # так и весь метод целиком — тогда она покрывает все его параметризации.
+    def is_known(name):
+        return name in known or base_name(name) in known
+
+    unexpected = sorted(n for n in failed if not is_known(n))
+    expected = sorted(n for n in failed if is_known(n))
+    still_failing = {base_name(n) for n in failed} | failed
+    fixed = sorted(k for k in known if k not in still_failing)
 
     out = ["### Сверка с известными дефектами стенда", ""]
     if expected:
