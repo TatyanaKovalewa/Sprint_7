@@ -1,6 +1,17 @@
 # Samokat API Autotests
 
+[![tests](https://github.com/TatyanaKovalewa/samokat-api-autotests/actions/workflows/tests.yml/badge.svg)](https://github.com/TatyanaKovalewa/samokat-api-autotests/actions/workflows/tests.yml)
+[![Java](https://img.shields.io/badge/Java-11-orange)](https://openjdk.org/projects/jdk/11/)
+[![REST Assured](https://img.shields.io/badge/REST%20Assured-5DA5DA)](https://rest-assured.io/)
+[![Allure](https://img.shields.io/badge/Allure-report-FF6A00)](https://tatyanakovalewa.github.io/samokat-api-autotests/)
+
 Автотесты API для сервиса аренды самокатов [qa-scooter.praktikum-services.ru](https://qa-scooter.praktikum-services.ru/)
+
+**35 тестов.** Прогоняются в CI при каждом пуше, Allure-отчёт публикуется автоматически:
+
+**👉 [Открыть Allure-отчёт](https://tatyanakovalewa.github.io/samokat-api-autotests/)**
+
+⚠️ **5 тестов стабильно падают — и это найденные дефекты стенда, а не ошибки в тестах.** Подробности ниже.
 
 ---
 
@@ -138,8 +149,36 @@ mvn allure:report
 После запуска тестов отчет доступен в директории:
 
 ``` 
-target/site/allure-maven/index.html
+target/site/allure-maven-plugin/index.html
 ```
+
+---
+
+## 🐞 Найденные дефекты стенда
+
+Тесты написаны по спецификации API. Пять из них стабильно падают, потому что сервер ведёт себя не так, как описано в документации. Это результат тестирования, а не сломанные тесты — поэтому они оставлены в наборе и продолжают прогоняться.
+
+| Тест | Ожидается | Фактически |
+|------|-----------|------------|
+| `CourierLoginTest#loginRequiresPassword` | `400 Bad Request` | висит 60 с, затем `504` |
+| `CourierLoginTest#loginWithEmptyBodyReturnsError` | `400 Bad Request` | висит 60 с, затем `504` |
+| `CourierLoginTest#loginWithoutPasswordFieldReturnsError` | `400 Bad Request` | висит 60 с, затем `504` |
+| `CourierDeleteTest#cannotDeleteCourierWithoutId` | `400 Bad Request` | `404 Not Found` |
+| `OrderAcceptTest#cannotAcceptOrderWithoutOrderId` | `400 Bad Request` | `404 Not Found` |
+
+**Первые три — самый серьёзный дефект:** запрос авторизации без пароля не отбивается валидацией, а уходит вглубь и подвешивает обработчик на минуту. Это не только несоответствие спецификации, но и риск исчерпания пула соединений.
+
+**Как это учтено в CI.** Список зафиксирован в [`.github/known-stand-defects.txt`](.github/known-stand-defects.txt), а скрипт [`.github/check-known-failures.py`](.github/check-known-failures.py) сверяет с ним каждый прогон:
+
+- падение из списка — ожидаемо, сборка проходит;
+- падение вне списка — сборка падает, нужен разбор;
+- тест из списка начал проходить — значит стенд починили, строку пора удалить.
+
+Так зелёный бейдж означает «новых проблем нет», а не «всё идеально» — и при этом ни один найденный дефект не спрятан.
+
+Полный прогон занимает около 10 минут — три теста на логин без пароля висят по минуте каждый, и это часть самого дефекта.
+
+Нестабильные падения на учебном стенде отсеиваются перезапуском (`rerunFailingTestsCount=2` в surefire): тест, прошедший со второй попытки, помечается как flaky и не роняет сборку.
 
 ---
 

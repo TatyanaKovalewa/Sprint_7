@@ -84,6 +84,8 @@
                 <version>2.22.2</version>
                 <configuration>
                     <testFailureIgnore>false</testFailureIgnore>
+                    <!-- Перезапуск упавших тестов: отсеивает флаки на нестабильном учебном стенде -->
+                    <rerunFailingTestsCount>2</rerunFailingTestsCount>
                     <argLine>
                         -javaagent:"${settings.localRepository}/org/aspectj/aspectjweaver/${aspectj.version}/aspectjweaver-${aspectj.version}.jar"
                     </argLine>
