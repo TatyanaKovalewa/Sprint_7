@@ -168,6 +168,11 @@ target/site/allure-maven-plugin/index.html
 
 **Первые три — самый серьёзный дефект:** запрос авторизации без пароля не отбивается валидацией, а уходит вглубь и подвешивает обработчик на минуту. Это не только несоответствие спецификации, но и риск исчерпания пула соединений.
 
+Оформленные баг-репорты со всеми шагами и контрольными запросами:
+[BUG1 — авторизация без пароля](https://github.com/TatyanaKovalewa/TatyanaKovalewa/blob/main/bug-reports/BUG1-login-bez-parolya-504.md) ·
+[BUG2 — удаление курьера без id](https://github.com/TatyanaKovalewa/TatyanaKovalewa/blob/main/bug-reports/BUG2-udalenie-kuriera-bez-id.md) ·
+[BUG3 — принятие заказа без id](https://github.com/TatyanaKovalewa/TatyanaKovalewa/blob/main/bug-reports/BUG3-prinyatie-zakaza-bez-id.md)
+
 **Как это учтено в CI.** Список зафиксирован в [`.github/known-stand-defects.txt`](.github/known-stand-defects.txt), а скрипт [`.github/check-known-failures.py`](.github/check-known-failures.py) сверяет с ним каждый прогон:
 
 - падение из списка — ожидаемо, сборка проходит;
