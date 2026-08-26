@@ -11,6 +11,8 @@
 
 **👉 [Открыть Allure-отчёт](https://tatyanakovalewa.github.io/samokat-api-autotests/)**
 
+[![Отчёт Allure](./docs/report.png)](https://tatyanakovalewa.github.io/samokat-api-autotests/)
+
 ⚠️ **5 тестов стабильно падают — и это найденные дефекты стенда, а не ошибки в тестах.** Подробности ниже.
 
 ---
